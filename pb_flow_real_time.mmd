@@ -1,0 +1,19 @@
+---
+title: PB Facebook -> Hubspot sync
+---
+flowchart LR
+
+    LegacySync[Legacy sync - real time ] --> LB_LeadConsumer
+    LB_LeadConsumer --> PW[ProvderWrapper::register]
+    PW --> D((Hubspot))
+    initial_lead_event@{ shape: notch-rect, label: "initial lead event" }
+    LB_LeadConsumer --> initial_lead_event
+    initial_lead_event -- api/webhook/sync/slug_id --> V2[V2 Real-time sync process]
+    V2 --> FBCL2[Facebook Converion Leads RealTime - id:1238]
+    FBCL2 -- createData() --> FBCL((Facebook Conversion Leads))
+
+    AC[Activecampaing] -- user status changed --> webhook
+    webhook@{ shape: doc, label: "ActiveCampaign Webhook" }
+    webhook --> V2Process[V2 Real-time sync process]
+    V2Process -- get lead additional data --> AC
+    V2Process -- createData --> FBCL
