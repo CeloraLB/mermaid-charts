@@ -10,9 +10,15 @@ flowchart LR
     LB_LeadConsumer --> initial_lead_event
     initial_lead_event -- api/webhook/sync/slug_id --> V2[V2 Real-time sync process]
     V2 --> FBCL2[Facebook Converion Leads RealTime - id:1238]
-    FBCL2 -- createData() --> FBCL
+    FBCL2 -- createData() --> FBCL((Facebook Conversion Leads))
 
     SP[Sync Process - every 30 min] --> D2((Hubspot))
     history@{ shape: doc, label: "change history" }
     D2 -- getSubscriberEmails() --> history
-    history -- syncRemoteData() --> FBCL((Facebook Conversion Leads))
+    history -- syncRemoteData() --> FBCL
+
+    AC[Activecampaing] -- user status changed --> webhook
+    webhook@{ shape: doc, label: "ActiveCampaign Webhook" }
+    webhook --> V2Process[V2 Real-time sync process]
+    V2Process -- get lead additional data --> AC
+    V2Process -- createData --> FBCL
